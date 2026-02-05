@@ -71,17 +71,17 @@ check_os() {
 
     case $OS in
         ubuntu)
-            if [ "$VERSION" != "20.04" ] && [ "$VERSION" != "22.04" ] && [ "$VERSION" != "24.04" ]; then
+            if [ "$VERSION" != "18.04" ] && [ "$VERSION" != "20.04" ] && [ "$VERSION" != "22.04" ] && [ "$VERSION" != "24.04" ]; then
                 print_warning "Ubuntu $VERSION may not be fully tested"
             fi
             print_step "Detected Ubuntu $VERSION"
             ;;
-        centos|almalinux|rocky)
+        centos|almalinux|rocky|cloudlinux|openeuler)
             print_step "Detected $OS $VERSION"
             ;;
         *)
             print_error "Unsupported OS: $OS"
-            echo "Supported: Ubuntu 20.04/22.04/24.04, CentOS 7/8, AlmaLinux, Rocky Linux"
+            echo "Supported: Ubuntu 18.04/20.04/22.04/24.04, CentOS 7/8, AlmaLinux, Rocky Linux, CloudLinux, openEuler"
             exit 1
             ;;
     esac
@@ -100,12 +100,15 @@ check_requirements() {
     fi
     
     # Check disk space
-    DISK_FREE=$(df -BG / | awk 'NR==2 {print $4}' | tr -d 'G')
-    if [ "$DISK_FREE" -lt 10 ]; then
-        print_error "Insufficient disk space: ${DISK_FREE}GB (minimum 10GB required)"
+    DISK_FREE=$(df -P / | awk 'NR==2 {print $4}')
+    # Convert blocks to GB (approximate, assuming 1K blocks)
+    DISK_FREE_GB=$((DISK_FREE / 1024 / 1024))
+    
+    if [ "$DISK_FREE_GB" -lt 10 ]; then
+        print_error "Insufficient disk space: ${DISK_FREE_GB}GB (minimum 10GB required)"
         exit 1
     else
-        print_step "Disk space: ${DISK_FREE}GB available"
+        print_step "Disk space: ${DISK_FREE_GB}GB available"
     fi
 }
 
@@ -114,11 +117,12 @@ install_dependencies() {
     print_step "Installing dependencies..."
     
     if [ "$OS" = "ubuntu" ]; then
-        apt-get update -y
-        apt-get install -y git python3 python3-pip wget curl
+        apt-get update -qq >/dev/null
+        apt-get install -y -qq git python3 python3-pip wget curl >/dev/null
     else
-        yum update -y
-        yum install -y git python3 python3-pip wget curl
+        # RHEL/CentOS/Alma/Rocky
+        yum update -y >/dev/null
+        yum install -y git python3 python3-pip wget curl >/dev/null
     fi
 }
 
@@ -163,7 +167,7 @@ main() {
     printf "${YELLOW}This will install CyberPanel Free on your server.${NC}\n"
     echo ""
     printf "Press ENTER to continue with installation... "
-    read -r
+    read -r ignored_var
     
     install_dependencies
     install_cyberpanel
