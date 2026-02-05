@@ -44,9 +44,9 @@ check_root() {
             printf "${YELLOW}[!] Not running as root. Attempting to elevate with sudo...${NC}\n"
             # Download the script again to a temp file since we might be running from a pipe
             if command -v curl >/dev/null 2>&1; then
-                curl -sL https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh > /tmp/cyberpanel_install.sh
+                curl -sL "https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh?v=$(date +%s)" > /tmp/cyberpanel_install.sh
             else
-                wget -qO /tmp/cyberpanel_install.sh https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh
+                wget -qO /tmp/cyberpanel_install.sh "https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh?v=$(date +%s)"
             fi
             
             exec sudo sh /tmp/cyberpanel_install.sh "$@"
