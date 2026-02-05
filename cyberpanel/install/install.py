@@ -517,9 +517,9 @@ class preFlightsChecks:
             conf = "/etc/tmpfiles.d/gunicorn.conf"
 
 
-            shutil.copy("gun-configs/gunicorn.service",service)
-            shutil.copy("gun-configs/gunicorn.socket",socket)
-            shutil.copy("gun-configs/gunicorn.conf", conf)
+            shutil.copy("install/gun-configs/gunicorn.service",service)
+            shutil.copy("install/gun-configs/gunicorn.socket",socket)
+            shutil.copy("install/gun-configs/gunicorn.conf", conf)
 
             logging.InstallLog.writeToFile("Gunicorn Configured!")
 
@@ -2070,8 +2070,8 @@ class preFlightsChecks:
 
             os.chdir(self.cwd)
 
-            shutil.copy("lscpd/lscpd.service","/etc/systemd/system/lscpd.service")
-            shutil.copy("lscpd/lscpdctrl","/usr/local/lscp/bin/lscpdctrl")
+            shutil.copy("install/lscpd/lscpd.service","/etc/systemd/system/lscpd.service")
+            shutil.copy("install/lscpd/lscpdctrl","/usr/local/lscp/bin/lscpdctrl")
 
             ##
 

@@ -50,10 +50,10 @@ class InstallCyberPanel:
                     InstallCyberPanel.stdOut("OpenLiteSpeed successfully installed!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installLiteSpeed]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installLiteSpeed]")
             return 0
 
@@ -82,10 +82,10 @@ class InstallCyberPanel:
                     InstallCyberPanel.stdOut("OpenLiteSpeed successfully restarted!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [reStartLiteSpeed]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [reStartLiteSpeed]")
             return 0
         return 1
@@ -153,7 +153,7 @@ class InstallCyberPanel:
             logging.InstallLog.writeToFile("OpenLiteSpeed Configurations fixed!")
 
 
-        except IOError, msg:
+        except IOError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [fix_ols_configs]")
             return 0
 
@@ -180,7 +180,7 @@ class InstallCyberPanel:
             InstallCyberPanel.stdOut("Default port is now 80 for OpenLiteSpeed!")
             logging.InstallLog.writeToFile("Default port is now 80 for OpenLiteSpeed!")
 
-        except IOError, msg:
+        except IOError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [changePortTo80]")
             return 0
 
@@ -209,10 +209,10 @@ class InstallCyberPanel:
             logging.InstallLog.writeToFile("Filemanager files are set!")
             InstallCyberPanel.stdOut("Filemanager files are set!")
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupFileManager]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupFileManager]")
             return 0
 
@@ -281,10 +281,10 @@ class InstallCyberPanel:
                     ## break for outer loop
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installAllPHPVersion]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installAllPHPVersion]")
             return 0
 
@@ -303,10 +303,10 @@ class InstallCyberPanel:
             logging.InstallLog.writeToFile("MariaDB repo set!")
             InstallCyberPanel.stdOut("MariaDB repo set!")
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_mariadb_repo]")
             return 0
-        except BaseException, msg:
+        except BaseException as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_mariadb_repo]")
             return 0
 
@@ -426,10 +426,10 @@ class InstallCyberPanel:
                         break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installMySQL]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installMySQL]")
             return 0
 
@@ -460,10 +460,10 @@ class InstallCyberPanel:
                     InstallCyberPanel.stdOut("MariaDB instance successfully enabled at system restart!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " Could not add mariadb to startup [installMySQL]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " Could not add mariadb to startup [installMySQL]")
             return 0
 
@@ -504,12 +504,12 @@ class InstallCyberPanel:
             InstallCyberPanel.stdOut("MariaDB root password changed!")
 
 
-        except pexpect.EOF, msg:
+        except pexpect.EOF as msg:
             logging.InstallLog.writeToFile(str(msg) + " Exception EOF [changeMYSQLRootPassword]")
-        except pexpect.TIMEOUT, msg:
-            print securemysql.before
+        except pexpect.TIMEOUT as msg:
+            print(securemysql.before)
             logging.InstallLog.writeToFile(str(msg) + " Exception EOF [changeMYSQLRootPassword]")
-        except BaseException, msg:
+        except BaseException as msg:
             logging.InstallLog.writeToFile(str(msg) + "[changeMYSQLRootPassword]")
 
         return 0
@@ -551,12 +551,12 @@ class InstallCyberPanel:
             InstallCyberPanel.stdOut("CyberPanel MariaDB root password changed!")
 
 
-        except pexpect.EOF, msg:
+        except pexpect.EOF as msg:
             logging.InstallLog.writeToFile(str(msg) + " Exception EOF [changeMYSQLRootPasswordCyberPanel]")
-        except pexpect.TIMEOUT, msg:
-            print securemysql.before
+        except pexpect.TIMEOUT as msg:
+            print(securemysql.before)
             logging.InstallLog.writeToFile(str(msg) + " Exception EOF [changeMYSQLRootPasswordCyberPanel]")
-        except BaseException, msg:
+        except BaseException as msg:
             logging.InstallLog.writeToFile(str(msg) + "[changeMYSQLRootPasswordCyberPanel]")
 
         return 0
@@ -585,10 +585,10 @@ class InstallCyberPanel:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startMariaDB]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startMariaDB]")
             return 0
 
@@ -699,10 +699,10 @@ class InstallCyberPanel:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installPureFTPD]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installPureFTPD]")
             return 0
 
@@ -737,10 +737,10 @@ class InstallCyberPanel:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startPureFTPD]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startPureFTPD]")
             return 0
 
@@ -810,7 +810,7 @@ class InstallCyberPanel:
             logging.InstallLog.writeToFile("PureFTPD configured!")
             InstallCyberPanel.stdOut("PureFTPD configured!")
 
-        except IOError, msg:
+        except IOError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installPureFTPDConfigurations]")
             return 0
 
@@ -880,10 +880,10 @@ class InstallCyberPanel:
                     InstallCyberPanel.stdOut("PowerDNS successfully installed!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [powerDNS]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [powerDNS]")
             return 0
 
@@ -928,7 +928,7 @@ class InstallCyberPanel:
             InstallCyberPanel.stdOut("PowerDNS configured!")
 
 
-        except IOError, msg:
+        except IOError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installPowerDNSConfigurations]")
             return 0
 
@@ -984,10 +984,10 @@ class InstallCyberPanel:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startPowerDNS]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [startPowerDNS]")
             return 0
 
@@ -1154,10 +1154,10 @@ class InstallCyberPanel:
             InstallCyberPanel.stdOut("LSCPD successfully installed!")
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installLSCPD]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installLSCPD]")
             return 0
 
