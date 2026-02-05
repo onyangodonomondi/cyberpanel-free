@@ -1585,46 +1585,22 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             lscpdPath = '/usr/local/lscp/bin/lscpd'
 
-            # if subprocess.check_output('uname -a').decode("utf-8").find("aarch64") == -1:
-            #     lscpdPath = '/usr/local/lscp/bin/lscpd'
-            #
-            #     lscpdSelection = 'lscpd-0.3.1'
-            #     if os.path.exists('/etc/lsb-release'):
-            #         result = open('/etc/lsb-release', 'r').read()
-            #         if result.find('22.04') > -1:
-            #             lscpdSelection = 'lscpd.0.4.0'
-            # else:
-            #     lscpdSelection = 'lscpd.aarch64'
+            # Define lswsgi path (compiled in setupPythonWSGI)
+            lswsgiPath = '/usr/local/CyberCP/bin/lswsgi'
 
+            if not os.path.exists(lswsgiPath):
+                 logging.InstallLog.writeToFile("[ERROR] lswsgi binary not found at %s. setupPythonWSGI must run first." % lswsgiPath)
+                 # We try to proceed, but it will likely fail.
+            
+            # Create symlink instead of copying pre-built binary
             try:
-                result = subprocess.run('uname -a', capture_output=True, text=True, shell=True)
+                if os.path.exists(lscpdPath):
+                    os.remove(lscpdPath)
+                os.symlink(lswsgiPath, lscpdPath)
+                logging.InstallLog.writeToFile("Symlinked %s to %s" % (lswsgiPath, lscpdPath))
+            except BaseException as e:
+                logging.InstallLog.writeToFile("[ERROR] Failed to symlink lswsgi: %s" % str(e))
 
-                if result.stdout.find('aarch64') == -1:
-                    lscpdSelection = 'lscpd-0.3.1'
-                    if os.path.exists('/etc/lsb-release'):
-                        result = open('/etc/lsb-release', 'r').read()
-                        if result.find('22.04') > -1:
-                            lscpdSelection = 'lscpd.0.4.0'
-                else:
-                    lscpdSelection = 'lscpd.aarch64'
-
-            except:
-
-                lscpdSelection = 'lscpd-0.3.1'
-                if os.path.exists('/etc/lsb-release'):
-                    result = open('/etc/lsb-release', 'r').read()
-                    if result.find('22.04') > -1:
-                        lscpdSelection = 'lscpd.0.4.0'
-
-
-            command = f'cp -f /usr/local/CyberCP/{lscpdSelection} /usr/local/lscp/bin/{lscpdSelection}'
-            preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
-
-            command = 'rm -f /usr/local/lscp/bin/lscpd'
-            preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
-
-            command = f'mv /usr/local/lscp/bin/{lscpdSelection} /usr/local/lscp/bin/lscpd'
-            preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
             command = 'chmod 755 %s' % (lscpdPath)
             preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
@@ -1643,14 +1619,21 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             if self.distro == centos or self.distro == cent8 or self.distro == openeuler:
                 command = 'adduser lscpd -M -d /usr/local/lscp'
             else:
-                command = 'useradd lscpd -M -d /usr/local/lscp'
+                command = 'useradd -r -m -d /home/lscpd -s /bin/bash lscpd'
 
+            # Idempotent user creation check is handled by preFlightsChecks.call usually not failing on existing user, 
+            # but for safety we use || true pattern or rely on return code handling if stricter
+            # Here we stick to the existing pattern but improved the command for ubuntu
+            
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             if self.distro == centos or self.distro == cent8 or self.distro == openeuler:
                 command = 'groupadd lscpd'
                 preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
-                # Added group in useradd for Ubuntu
+            else:
+                # On Ubuntu try to create group if not exists
+                command = 'groupadd lscpd || true'
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             command = 'usermod -a -G lscpd lscpd'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
@@ -1662,7 +1645,13 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
             except:
                 pass
             try:
-                os.mkdir('/usr/local/lscp/cyberpanel/logs')
+                os.makedirs('/usr/local/lscp/cyberpanel/logs', exist_ok=True)
+                # Also create the main lscp logs directory if missing
+                os.makedirs('/usr/local/lscp/logs', exist_ok=True)
+                
+                # Fix ownership
+                command = "chown -R lscpd:lscpd /usr/local/lscp"
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
             except:
                 pass
 
