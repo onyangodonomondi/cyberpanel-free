@@ -153,7 +153,13 @@ install_cyberpanel() {
     cd "$INSTALL_DIR/cyberpanel"
     
     # Run the Python installer
-    python3 install/install.py
+    # Detect public IP
+    if [ -z "$SERVER_IP" ]; then
+        SERVER_IP=$(curl -s https://api.ipify.org || wget -qO- https://api.ipify.org)
+    fi
+    
+    # Run the Python installer with the required IP argument
+    python3 install/install.py "$SERVER_IP"
 }
 
 # Main
