@@ -2229,7 +2229,6 @@ class preFlightsChecks:
             path = "/root/.ssh"
 
             if not os.path.exists(path):
-            if not os.path.exists(path):
                 os.mkdir(path)
 
             while (1):
