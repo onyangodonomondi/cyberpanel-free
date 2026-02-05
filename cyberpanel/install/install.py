@@ -313,26 +313,26 @@ class preFlightsChecks:
 
             if self.distro == ubuntu:
                 self.stdOut("Add Cyberpanel user")
-                command = 'adduser --disabled-login --gecos "" cyberpanel'
-                preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
+                command = 'id cyberpanel >/dev/null 2>&1 || adduser --disabled-login --gecos "" cyberpanel'
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
             else:
-                command = "useradd -s /bin/false cyberpanel"
-                preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
+                command = "id cyberpanel >/dev/null 2>&1 || useradd -s /bin/false cyberpanel"
+                preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
             ###############################
 
             ### Docker User/group
 
             if self.distro == ubuntu:
-                command = 'adduser --disabled-login --gecos "" docker'
+                command = 'id docker >/dev/null 2>&1 || adduser --disabled-login --gecos "" docker'
             else:
-                command = "adduser docker"
+                command = "id docker >/dev/null 2>&1 || adduser docker"
 
-            preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+            preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
-            command = 'groupadd docker'
-            preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+            command = 'getent group docker >/dev/null 2>&1 || groupadd docker'
+            preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR, True)
 
             command = 'usermod -aG docker docker'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)

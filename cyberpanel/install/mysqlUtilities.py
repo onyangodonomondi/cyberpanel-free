@@ -26,9 +26,17 @@ class mysqlUtilities:
 
                 f = open(passFile)
                 data = f.read()
-                password = data.split('\n', 1)[0]
-
-                initCommand = 'mariadb -u root -p' + password + ' -e "'
+                f.close()
+                
+                # Check if the file contains JSON (from remote mysql config with empty values)
+                # If so, we need to fall back to using socket authentication
+                if data.strip().startswith('{'):
+                    # File contains JSON but validation failed - use socket auth
+                    initCommand = 'mariadb -u root -e "'
+                else:
+                    # Plain password format
+                    password = data.split('\\n', 1)[0]
+                    initCommand = 'mariadb -u root -p' + password + ' -e "'
                 remote = 0
 
             command = initCommand + createDB + '"'
