@@ -2410,7 +2410,13 @@ class preFlightsChecks:
 
             count = 0
             while (1):
-                res = self.pip_install("http://" + preFlightsChecks.cyberPanelMirror + "/pyOpenSSL-17.5.0.tar.gz")
+                # Try system package first
+                if self.install_system_package("python3-openssl"):
+                    logging.InstallLog.writeToFile("python3-openssl successfully installed via system package!")
+                    preFlightsChecks.stdOut("python3-openssl successfully installed via system package!")
+                    break
+
+                res = self.pip_install("pyOpenSSL")
 
                 if res != 0:
                     count = count + 1
@@ -2428,7 +2434,13 @@ class preFlightsChecks:
 
             count = 0
             while (1):
-                res = self.pip_install("http://" + preFlightsChecks.cyberPanelMirror + "/certbot-0.21.1.tar.gz")
+                # Try system package first
+                if self.install_system_package("certbot") or self.install_system_package("python3-certbot"):
+                     logging.InstallLog.writeToFile("CertBot successfully installed via system package!")
+                     preFlightsChecks.stdOut("CertBot successfully installed via system package!")
+                     break
+
+                res = self.pip_install("certbot")
                 
                 if res != 0:
                     count = count + 1
@@ -2438,6 +2450,11 @@ class preFlightsChecks:
                         logging.InstallLog.writeToFile(
                             "Failed to install CertBot, exiting installer! [installCertBot]")
                         preFlightsChecks.stdOut("Installation failed, consult: /var/log/installLogs.txt")
+                        os._exit(0)
+                else:
+                     logging.InstallLog.writeToFile("CertBot successfully installed! [pip]")
+                     preFlightsChecks.stdOut("CertBot successfully installed! [pip]")
+                     break
                         os._exit(0)
                 else:
                     logging.InstallLog.writeToFile("CertBot successfully installed!  [pip]")
