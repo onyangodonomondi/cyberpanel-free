@@ -930,7 +930,8 @@ class preFlightsChecks:
 
             writeToFile.close()
 
-            os.mkdir('/usr/local/lscp/cyberpanel/phpmyadmin/tmp')
+            if not os.path.exists('/usr/local/lscp/cyberpanel/phpmyadmin/tmp'):
+                os.mkdir('/usr/local/lscp/cyberpanel/phpmyadmin/tmp')
 
             command = 'chown -R nobody:nobody /usr/local/lscp/cyberpanel/phpmyadmin'
             subprocess.call(shlex.split(command))
@@ -2228,6 +2229,7 @@ class preFlightsChecks:
             path = "/root/.ssh"
 
             if not os.path.exists(path):
+            if not os.path.exists(path):
                 os.mkdir(path)
 
             while (1):
@@ -2724,7 +2726,8 @@ def main():
 
     ## Writing public IP
 
-    os.mkdir("/etc/cyberpanel")
+    if not os.path.exists("/etc/cyberpanel"):
+        os.mkdir("/etc/cyberpanel")
 
     machineIP = open("/etc/cyberpanel/machineIP", "w")
     machineIP.writelines(args.publicip)
