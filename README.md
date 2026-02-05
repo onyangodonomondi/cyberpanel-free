@@ -13,16 +13,19 @@
 | 🔥 **Firewall** | Built-in CSF/FirewallD integration |
 | 📊 **DNS Management** | PowerDNS for domain management |
 
-## 📦 Quick Installation
+## 📦 Installation
 
-### Fresh VPS Installation
+### One-Line Install (Recommended)
 
 ```bash
-# Clone the repository
+sh <(curl -sL https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh || wget -qO - https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh)
+```
+
+### Manual Installation
+
+```bash
 git clone https://github.com/onyangodonomondi/cyberpanel-free.git
 cd cyberpanel-free/cyberpanel
-
-# Run the installer
 sudo python3 install/install.py
 ```
 
