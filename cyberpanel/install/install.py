@@ -406,12 +406,11 @@ class preFlightsChecks:
 
         os.chdir(self.path)
 
-        os.chdir('/usr/local')
-
-        command = "git clone https://github.com/usmannasir/cyberpanel"
-        preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
-
-        shutil.move('cyberpanel', 'CyberCP')
+        # We assume the current directory IS the cyberpanel source.
+        # os.chdir(self.path)
+        # Skipping download and extraction to preserve current codebase.
+        logging.InstallLog.writeToFile("Skipping CyberPanel git clone - using current source code.")
+        preFlightsChecks.stdOut("Using existing CyberPanel source code...")
 
         ##
 
