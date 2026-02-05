@@ -130,10 +130,16 @@ install_cyberpanel() {
         esac
     fi
     
-    git clone https://github.com/onyangodonomondi/cyberpanel-free.git "$INSTALL_DIR"
+    # Clone to temp directory first, then move contents properly
+    TEMP_DIR="/tmp/cyberpanel-free-$$"
+    git clone https://github.com/onyangodonomondi/cyberpanel-free.git "$TEMP_DIR"
+    
+    # Move cyberpanel directory contents to install dir (so CyberCP/ is at the right level)
+    mv "$TEMP_DIR/cyberpanel" "$INSTALL_DIR"
+    rm -rf "$TEMP_DIR"
     
     print_step "Starting CyberPanel installation..."
-    cd "$INSTALL_DIR/cyberpanel"
+    cd "$INSTALL_DIR"
     
     # Detect public IP
     if [ -z "$SERVER_IP" ]; then
