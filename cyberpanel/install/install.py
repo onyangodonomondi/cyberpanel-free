@@ -511,18 +511,18 @@ password="%s"
 
         os.chdir("/usr/local/CyberCP")
 
-        command = "/usr/local/CyberPanel/bin/python manage.py makemigrations"
+        command = "/usr/local/CyberCP/bin/python manage.py makemigrations"
         preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
         ##
 
-        command = "/usr/local/CyberPanel/bin/python manage.py migrate"
+        command = "/usr/local/CyberCP/bin/python manage.py migrate"
         preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
         if not os.path.exists("/usr/local/CyberCP/public"):
             os.mkdir("/usr/local/CyberCP/public")
 
-        command = "/usr/local/CyberPanel/bin/python manage.py collectstatic --noinput --clear"
+        command = "/usr/local/CyberCP/bin/python manage.py collectstatic --noinput --clear"
         preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
         ## Moving static content to lscpd location
@@ -1783,7 +1783,7 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             os.chdir("wsgi-lsapi-2.1")
 
-            command = "/usr/local/CyberPanel/bin/python ./configure.py"
+            command = "/usr/local/CyberCP/bin/python ./configure.py"
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
 
