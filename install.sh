@@ -140,11 +140,13 @@ install_cyberpanel() {
     
     # Create virtualenv in /usr/local/CyberCP which will create bin/python
     print_step "Setting up Python virtual environment..."
-    pip3 install virtualenv >/dev/null 2>&1 || pip install virtualenv >/dev/null 2>&1
-    virtualenv --system-site-packages "$INSTALL_DIR"
+    python3 -m venv --system-site-packages "$INSTALL_DIR"
     
     # Activate virtualenv and install requirements
     . "$INSTALL_DIR/bin/activate"
+    
+    # Upgrade pip and install wheel first
+    pip install --upgrade pip wheel >/dev/null 2>&1 || true
     
     # Install requirements if file exists
     if [ -f "$INSTALL_DIR/requirements.txt" ]; then
