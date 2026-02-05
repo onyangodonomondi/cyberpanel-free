@@ -1640,6 +1640,11 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             command = 'usermod -a -G lsadm lscpd'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+            
+            # Ensure lscpd is in cyberpanel group to read settings.py
+            command = 'usermod -a -G cyberpanel lscpd'
+            preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
+
             try:
                 os.mkdir('/usr/local/lscp/cyberpanel')
             except:
