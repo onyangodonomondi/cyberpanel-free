@@ -87,6 +87,23 @@ class preFlightsChecks:
             preFlightsChecks.stdOut(f"Exception installing {package}: {str(e)}")
             return False
 
+    def pip_install(self, package_args):
+        """Helper to install python packages via pip, handling PEP 668"""
+        try:
+            # Try normal install first
+            command = "pip install " + package_args
+            res = subprocess.call(shlex.split(command))
+            
+            # If failed, try with --break-system-packages
+            if res != 0:
+                preFlightsChecks.stdOut("Pip install failed, retrying with --break-system-packages for: " + package_args)
+                command = "pip install " + package_args + " --break-system-packages"
+                res = subprocess.call(shlex.split(command))
+                
+            return res
+        except:
+            return 1
+
     def setup_account_cyberpanel(self):
         try:
             count = 0
@@ -387,31 +404,47 @@ class preFlightsChecks:
 
     def install_python_requests(self):
         try:
+            if os.path.exists("/usr/bin/apt-get"):
+                # Try system package first
+                if self.install_system_package("python3-requests") and self.install_system_package("python3-urllib3"):
+                    logging.InstallLog.writeToFile("Requests/Urllib3 installed via apt!")
+                    return
+
             # For Python 3, we just use pip
-            subprocess.call(shlex.split("pip install requests urllib3"))
-            logging.InstallLog.writeToFile("Requests module Successfully installed!")
-            preFlightsChecks.stdOut("Requests module Successfully installed!")
+            res = self.pip_install("requests urllib3")
+            if res == 0:
+                logging.InstallLog.writeToFile("Requests module Successfully installed!")
+                preFlightsChecks.stdOut("Requests module Successfully installed!")
         except:
              pass
 
     def install_pexpect(self):
         try:
-            subprocess.call(shlex.split("pip install pexpect"))
-            logging.InstallLog.writeToFile("pexpect successfully installed!")
-            preFlightsChecks.stdOut("pexpect successfully installed!")
+            if os.path.exists("/usr/bin/apt-get"):
+                if self.install_system_package("python3-pexpect"):
+                    return
+
+            res = self.pip_install("pexpect")
+            if res == 0:
+                logging.InstallLog.writeToFile("pexpect successfully installed!")
+                preFlightsChecks.stdOut("pexpect successfully installed!")
         except:
             pass
 
     def install_django(self):
         count = 0
         while (1):
+            # Try system package first on Ubuntu/Debian
+            if os.path.exists("/usr/bin/apt-get"):
+                if self.install_system_package("python3-django"):
+                    logging.InstallLog.writeToFile("DJANGO installed via apt!")
+                    preFlightsChecks.stdOut("DJANGO installed via apt!")
+                    break
+
             # Installing a newer Django version compatible with Py3. 
-            # Warning: This might require code changes in CyberCP if it relies on 1.11 specific features.
-            command = "pip install django" 
+            res = self.pip_install("django")
 
-            res = subprocess.call(shlex.split(command))
-
-            if res == 1:
+            if res != 0:
                 count = count + 1
                 preFlightsChecks.stdOut("Unable to install DJANGO, trying again, try number: " + str(count))
                 if count == 3:
@@ -426,11 +459,16 @@ class preFlightsChecks:
     def install_python_mysql_library(self):
         count = 0
         while (1):
+            # Try system package first
+            if os.path.exists("/usr/bin/apt-get"):
+                if self.install_system_package("python3-mysqldb"):
+                    logging.InstallLog.writeToFile("mysqlclient installed via apt!")
+                    break
+
             # For Python 3, we use mysqlclient. We installed dev headers in install_python_dev
-            command = "pip install mysqlclient"
-            res = subprocess.call(shlex.split(command))
+            res = self.pip_install("mysqlclient")
             
-            if res == 1:
+            if res != 0:
                 # Fallback or retry?
                 count = count + 1
                 preFlightsChecks.stdOut("Unable to install mysqlclient, trying again, try number: " + str(count))
@@ -447,9 +485,12 @@ class preFlightsChecks:
     def install_gunicorn(self):
         count = 0
         while (1):
-            command = "pip install gunicorn"
-            res = subprocess.call(shlex.split(command))
-            if res == 1:
+            if os.path.exists("/usr/bin/apt-get"):
+                if self.install_system_package("gunicorn"):
+                    break
+
+            res = self.pip_install("gunicorn")
+            if res != 0:
                 count = count + 1
                 preFlightsChecks.stdOut("Unable to install GUNICORN, trying again, try number: " + str(count))
                 if count == 3:
@@ -507,9 +548,14 @@ class preFlightsChecks:
 
     def install_psutil(self):
         try:
-            subprocess.call(shlex.split("pip install psutil"))
-            logging.InstallLog.writeToFile("psutil successfully installed!")
-            preFlightsChecks.stdOut("psutil successfully installed!")
+            if os.path.exists("/usr/bin/apt-get"):
+                if self.install_system_package("python3-psutil"):
+                    return
+
+            res = self.pip_install("psutil")
+            if res == 0:
+                logging.InstallLog.writeToFile("psutil successfully installed!")
+                preFlightsChecks.stdOut("psutil successfully installed!")
         except:
             pass
 
@@ -2303,11 +2349,9 @@ class preFlightsChecks:
             count = 0
             while (1):
 
-                command = "pip install http://mirror.cyberpanel.net/urllib3-1.22.tar.gz"
+                res = self.pip_install("http://mirror.cyberpanel.net/urllib3-1.22.tar.gz")
 
-                res = subprocess.call(shlex.split(command))
-
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Unable to install urllib3 module, trying again, try number: " + str(count))
@@ -2324,11 +2368,9 @@ class preFlightsChecks:
             count = 0
             while (1):
 
-                command = "pip install http://mirror.cyberpanel.net/requests-2.18.4.tar.gz"
+                res = self.pip_install("http://mirror.cyberpanel.net/requests-2.18.4.tar.gz")
 
-                res = subprocess.call(shlex.split(command))
-
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Unable to install requests module, trying again, try number: " + str(count))
@@ -2367,11 +2409,9 @@ class preFlightsChecks:
 
             count = 0
             while (1):
-                command = "pip install http://" + preFlightsChecks.cyberPanelMirror + "/pyOpenSSL-17.5.0.tar.gz"
+                res = self.pip_install("http://" + preFlightsChecks.cyberPanelMirror + "/pyOpenSSL-17.5.0.tar.gz")
 
-                res = subprocess.call(shlex.split(command))
-
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Trying to install pyOpenSSL, trying again, try number: " + str(count))
@@ -2387,11 +2427,9 @@ class preFlightsChecks:
 
             count = 0
             while (1):
-                command = "pip install http://" + preFlightsChecks.cyberPanelMirror + "/certbot-0.21.1.tar.gz"
-
-                res = subprocess.call(shlex.split(command))
-
-                if res == 1:
+                res = self.pip_install("http://" + preFlightsChecks.cyberPanelMirror + "/certbot-0.21.1.tar.gz")
+                
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Trying to install CertBot, trying again, try number: " + str(count))
@@ -2428,11 +2466,13 @@ class preFlightsChecks:
         try:
             count = 0
             while (1):
-                command = "pip install tldextract"
+                if os.path.exists("/usr/bin/apt-get"):
+                    if self.install_system_package("python3-tldextract"):
+                        break
 
-                res = subprocess.call(shlex.split(command))
+                res = self.pip_install("tldextract")
 
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Trying to install tldextract, trying again, try number: " + str(count))
@@ -2541,11 +2581,13 @@ milter_default_action = accept
         try:
             count = 0
             while (1):
-                command = "pip install dnspython"
+                if os.path.exists("/usr/bin/apt-get"):
+                    if self.install_system_package("python3-dnspython"):
+                        break
 
-                res = subprocess.call(shlex.split(command))
+                res = self.pip_install("dnspython")
 
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Trying to install dnspython, trying again, try number: " + str(count))
@@ -2603,8 +2645,7 @@ milter_default_action = accept
             logging.InstallLog.writeToFile(str(msg) + " [setupPHPAndComposer]")
             return 0
 
-    @staticmethod
-    def setupVirtualEnv():
+    def setupVirtualEnv(self):
         try:
 
             ##
@@ -2633,10 +2674,13 @@ milter_default_action = accept
 
             count = 0
             while (1):
-                command = "pip install virtualenv"
-                res = subprocess.call(shlex.split(command))
+                if os.path.exists("/usr/bin/apt-get"):
+                    if self.install_system_package("virtualenv"):
+                        break
+                        
+                res = self.pip_install("virtualenv")
 
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut(
                         "Trying to install virtualenv, trying again, try number: " + str(count))
