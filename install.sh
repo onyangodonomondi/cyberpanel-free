@@ -102,7 +102,7 @@ install_dependencies() {
     
     if [ "$OS" = "ubuntu" ]; then
         apt-get update -qq >/dev/null 2>&1 || true
-        apt-get install -y -qq git python3 python3-pip wget curl >/dev/null 2>&1 || true
+        apt-get install -y -qq git python3 python3-pip python3-venv python3-dev wget curl >/dev/null 2>&1 || true
     else
         yum update -y >/dev/null 2>&1 || true
         yum install -y git python3 python3-pip wget curl >/dev/null 2>&1 || true
@@ -137,6 +137,20 @@ install_cyberpanel() {
     # Move cyberpanel directory contents to install dir (so CyberCP/ is at the right level)
     mv "$TEMP_DIR/cyberpanel" "$INSTALL_DIR"
     rm -rf "$TEMP_DIR"
+    
+    # Create virtualenv in /usr/local/CyberCP which will create bin/python
+    print_step "Setting up Python virtual environment..."
+    pip3 install virtualenv >/dev/null 2>&1 || pip install virtualenv >/dev/null 2>&1
+    virtualenv --system-site-packages "$INSTALL_DIR"
+    
+    # Activate virtualenv and install requirements
+    . "$INSTALL_DIR/bin/activate"
+    
+    # Install requirements if file exists
+    if [ -f "$INSTALL_DIR/requirements.txt" ]; then
+        print_step "Installing Python dependencies..."
+        pip install --ignore-installed -r "$INSTALL_DIR/requirements.txt" >/dev/null 2>&1 || true
+    fi
     
     print_step "Starting CyberPanel installation..."
     cd "$INSTALL_DIR"
