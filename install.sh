@@ -41,7 +41,7 @@ print_error() {
 check_root() {
     if [ "$(id -u)" -ne 0 ]; then
         print_error "This script must be run as root"
-        echo "Please run: sudo sh install.sh"
+        echo "Please run the command as root (e.g. 'sudo su -' first)"
         exit 1
     fi
 }
