@@ -674,7 +674,7 @@ class preFlightsChecks:
         ### Applying migrations
 
 
-        os.chdir(os.path.join(self.cyberPanelPath, "CyberCP"))
+        os.chdir(os.path.join(self.cyberPanelPath, "cyberpanel/CyberCP"))
 
         count = 0
 
