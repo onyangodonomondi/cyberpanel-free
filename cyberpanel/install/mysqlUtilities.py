@@ -14,8 +14,13 @@ class mysqlUtilities:
                 from json import loads
                 mysqlData = loads(open("/etc/cyberpanel/mysqlPassword", 'r').read())
 
-                initCommand = 'mariadb -h %s --port %s -u %s -p%s -e "' % (mysqlData['mysqlhost'], mysqlData['mysqlport'], mysqlData['mysqluser'], mysqlData['mysqlpassword'])
-                remote = 1
+                # Verify we have valid remote MySQL data with required fields
+                if mysqlData.get('mysqlhost') and mysqlData.get('mysqlport') and mysqlData.get('mysqluser') and mysqlData.get('mysqlpassword'):
+                    initCommand = 'mariadb -h %s --port %s -u %s -p%s -e "' % (mysqlData['mysqlhost'], mysqlData['mysqlport'], mysqlData['mysqluser'], mysqlData['mysqlpassword'])
+                    remote = 1
+                else:
+                    # Fall back to local connection if remote data is incomplete
+                    raise ValueError("Incomplete remote MySQL configuration")
             except:
                 passFile = "/etc/cyberpanel/mysqlPassword"
 

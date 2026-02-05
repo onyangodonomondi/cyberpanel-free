@@ -507,11 +507,11 @@ gpgcheck=1
 
         ###### FTP Groups and user settings settings
 
-        command = 'groupadd -g 2001 ftpgroup'
-        install.preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
+        command = 'getent group ftpgroup >/dev/null 2>&1 || groupadd -g 2001 ftpgroup'
+        install.preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-        command = 'useradd -u 2001 -s /bin/false -d /bin/null -c "pureftpd user" -g ftpgroup ftpuser'
-        install.preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
+        command = 'id ftpuser >/dev/null 2>&1 || useradd -u 2001 -s /bin/false -d /bin/null -c "pureftpd user" -g ftpgroup ftpuser'
+        install.preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
     def startPureFTPD(self):
         ############## Start pureftpd ######################
