@@ -4,7 +4,7 @@
 # https://github.com/onyangodonomondi/cyberpanel-free
 #####################################################
 
-set -e
+# Removed 'set -e' to prevent silent exit on errors
 
 # Colors
 RED='\033[0;31m'
@@ -40,21 +40,9 @@ print_error() {
 # Check if running as root
 check_root() {
     if [ "$(id -u)" -ne 0 ]; then
-        if command -v sudo >/dev/null 2>&1; then
-            printf "${YELLOW}[!] Not running as root. Attempting to elevate with sudo...${NC}\n"
-            # Download the script again to a temp file since we might be running from a pipe
-            if command -v curl >/dev/null 2>&1; then
-                curl -sL "https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh?v=$(date +%s)" > /tmp/cyberpanel_install.sh
-            else
-                wget -qO /tmp/cyberpanel_install.sh "https://raw.githubusercontent.com/onyangodonomondi/cyberpanel-free/main/install.sh?v=$(date +%s)"
-            fi
-            
-            exec sudo sh /tmp/cyberpanel_install.sh "$@"
-        else
-            print_error "This script must be run as root"
-            echo "Please run: sudo su -"
-            exit 1
-        fi
+        print_error "This script must be run as root"
+        echo "Please run: sudo su - (then run the installer again)"
+        exit 1
     fi
 }
 
