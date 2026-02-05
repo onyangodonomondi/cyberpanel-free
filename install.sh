@@ -152,11 +152,25 @@ install_cyberpanel() {
     print_step "Starting CyberPanel installation..."
     cd "$INSTALL_DIR/cyberpanel"
     
-    # Run the Python installer
     # Detect public IP
     if [ -z "$SERVER_IP" ]; then
         SERVER_IP=$(curl -s https://api.ipify.org || wget -qO- https://api.ipify.org)
     fi
+    
+    # Fallback: Prompt user if IP detection failed
+    if [ -z "$SERVER_IP" ]; then
+        printf "Unable to automatically detect your server's public IP.\n"
+        printf "Please enter your server's public IP address: "
+        read -r SERVER_IP
+    fi
+    
+    # Validate IP
+    if [ -z "$SERVER_IP" ]; then
+         echo "Error: Public IP is required to proceed."
+         exit 1
+    fi
+    
+    echo "Using Server IP: $SERVER_IP"
     
     # Run the Python installer with the required IP argument
     python3 install/install.py "$SERVER_IP"
@@ -168,6 +182,11 @@ main() {
     check_root
     check_os
     check_requirements
+    
+    # Ensure fresh code if repo exists
+    if [ -d "$INSTALL_DIR" ]; then
+        rm -rf "$INSTALL_DIR"
+    fi
     
     echo ""
     printf "${YELLOW}This will install CyberPanel Free on your server.${NC}\n"
