@@ -633,7 +633,7 @@ class preFlightsChecks:
 
         logging.InstallLog.writeToFile("Updating settings.py!")
 
-        path = self.cyberPanelPath+"/CyberCP/settings.py"
+        path = self.cyberPanelPath+"/cyberpanel/CyberCP/settings.py"
 
         data = open(path, "r").readlines()
 
