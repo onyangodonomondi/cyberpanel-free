@@ -1,144 +1,99 @@
-
-import pexpect
-import installLog as logging
+import subprocess, shlex
+import install
+import time
 
 class mysqlUtilities:
 
     @staticmethod
-    def SendQuery(user, password, dbname, query):
-        try:
-            expectation = "Enter password:"
-            securemysql = pexpect.spawn("mysql -u "+user+" -p")
-            securemysql.expect(expectation)
-            securemysql.sendline(password)
-
-            expectation = ["Access denied for user", "Welcome to the MariaDB monitor"]
-            index = securemysql.expect(expectation)
-            if index == 0:
-                return "Wrong Password"
-            else:
-
-                securemysql.sendline("USE "+dbname+";")
-                expectation = "Database changed"
-                securemysql.expect(expectation)
-
-                expectation = "Query OK"
-                securemysql.sendline(query);
-                securemysql.expect(expectation)
-
-                securemysql.sendline("exit");
-
-                securemysql.wait()
-                return 1
-        except pexpect.EOF as msg:
-            logging.InstallLog.writeToFile(str(msg) + " Exception EOF [SendQuery]")
-        except BaseException as msg:
-            logging.InstallLog.writeToFile(str(msg) + "[SendQuery]")
-
-
-    @staticmethod
-    def createDatabase(dbname,dbuser,dbpassword):
+    def createDatabase(dbname, dbuser, dbpassword, publicip):
 
         try:
+            createDB = "CREATE DATABASE " + dbname
 
-            passFile = "/etc/cyberpanel/mysqlPassword"
+            try:
+                from json import loads
+                mysqlData = loads(open("/etc/cyberpanel/mysqlPassword", 'r').read())
 
-            f = open(passFile)
-            data = f.read()
-            password = data.split('\n', 1)[0]
+                initCommand = 'mariadb -h %s --port %s -u %s -p%s -e "' % (mysqlData['mysqlhost'], mysqlData['mysqlport'], mysqlData['mysqluser'], mysqlData['mysqlpassword'])
+                remote = 1
+            except:
+                passFile = "/etc/cyberpanel/mysqlPassword"
 
-            expectation = "Enter password:"
-            securemysql = pexpect.spawn("mysql -u root -p")
-            securemysql.expect(expectation)
-            securemysql.sendline(password)
+                f = open(passFile)
+                data = f.read()
+                password = data.split('\n', 1)[0]
 
-            expectation = ["Access denied for user", "Welcome to the MariaDB monitor"]
+                initCommand = 'mariadb -u root -p' + password + ' -e "'
+                remote = 0
 
-            index = securemysql.expect(expectation)
+            command = initCommand + createDB + '"'
 
-            if index == 0:
-                return "Wrong root Password"
+            if install.preFlightsChecks.debug:
+                print(command)
+                time.sleep(10)
+
+            cmd = shlex.split(command)
+            res = subprocess.call(cmd)
+
+            if res == 1:
+                return 0
+
+            if remote:
+                createUser = "CREATE USER '" + dbuser + "'@'%s' IDENTIFIED BY '" % (publicip) + dbpassword + "'"
             else:
-                securemysql.sendline("CREATE DATABASE "+dbname+";")
+                createUser = "CREATE USER '" + dbuser + "'@'localhost' IDENTIFIED BY '" + dbpassword + "'"
 
-                expectation = ["database exists","Query OK"]
-                index = securemysql.expect(expectation)
+            command = initCommand + createUser + '"'
 
+            if install.preFlightsChecks.debug:
+                print(command)
+                time.sleep(10)
 
-                if index == 0:
-                    return "This database already exists, please choose another name."
-                elif index == 1:
-                    securemysql.sendline("CREATE USER '" +dbuser+ "'@'localhost' IDENTIFIED BY '"+dbpassword+"';")
-                    expectation = ["CREATE USER failed","Query OK"]
+            cmd = shlex.split(command)
+            res = subprocess.call(cmd)
 
-                    index = securemysql.expect(expectation)
+            if res == 1:
+                return 0
+            else:
 
-                    if index == 0:
-                        securemysql.sendline("DROP DATABASE IF EXISTS "+dbname+";")
-                        return "This user already exists, please choose another user."
+                if remote:
+
+                    ### DO Check
+
+                    if mysqlData['mysqlhost'].find('ondigitalocean') > -1:
+
+                        alterUserPassword = "ALTER USER 'cyberpanel'@'%s' IDENTIFIED WITH mysql_native_password BY '%s'" % (
+                        publicip, dbpassword)
+                        command = initCommand + alterUserPassword + '"'
+
+                        if install.preFlightsChecks.debug:
+                            print(command)
+                            time.sleep(10)
+
+                        cmd = shlex.split(command)
+                        subprocess.call(cmd)
+
+                    ## RDS Check
+
+                    if mysqlData['mysqlhost'].find('rds.amazon') == -1:
+                        dropDB = "GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (publicip)
                     else:
-                        securemysql.sendline("GRANT ALL PRIVILEGES ON " +dbname+ ".* TO '" +dbuser+ "'@'localhost';")
-                        expectation = "Query OK"
-                        securemysql.expect(expectation)
-                        securemysql.sendline("exit")
-                        securemysql.wait()
+                        dropDB = "GRANT INDEX, DROP, UPDATE, ALTER, CREATE, SELECT, INSERT, DELETE ON " + dbname + ".* TO '" + dbuser + "'@'%s'" % (publicip)
+                else:
+                    dropDB = "GRANT ALL PRIVILEGES ON " + dbname + ".* TO '" + dbuser + "'@'localhost'"
+
+                command = initCommand + dropDB + '"'
+
+                if install.preFlightsChecks.debug:
+                    print(command)
+                    time.sleep(10)
+
+                cmd = shlex.split(command)
+                res = subprocess.call(cmd)
+
+                if res == 1:
+                    return 0
+
             return 1
-        except pexpect.EOF as msg:
-            logging.InstallLog.writeToFile(str(msg) + " Exception EOF [createDatabase]")
         except BaseException as msg:
-            logging.InstallLog.writeToFile(str(msg) + "[createDatabase]")
-
-    @staticmethod
-    def createDatabaseCyberPanel(dbname,dbuser,dbpassword, mysql):
-
-        try:
-
-            passFile = "/etc/cyberpanel/mysqlPassword"
-
-            f = open(passFile)
-            data = f.read()
-            password = data.split('\n', 1)[0]
-
-            expectation = "Enter password:"
-            if mysql == 'Two':
-                securemysql = pexpect.spawn("mysql --host=127.0.0.1 --port=3307 -u root -p")
-            else:
-                securemysql = pexpect.spawn("mysql -u root -p", timeout=5)
-            securemysql.expect(expectation)
-            securemysql.sendline(password)
-
-            expectation = ["Access denied for user", "Welcome to the MariaDB monitor"]
-
-            index = securemysql.expect(expectation)
-
-            if index == 0:
-                return "Wrong root Password"
-            else:
-                securemysql.sendline("CREATE DATABASE "+dbname+";")
-
-                expectation = ["database exists","Query OK"]
-                index = securemysql.expect(expectation)
-
-
-                if index == 0:
-                    return "This database already exists, please choose another name."
-                elif index == 1:
-                    securemysql.sendline("CREATE USER '" +dbuser+ "'@'localhost' IDENTIFIED BY '"+dbpassword+"';")
-                    expectation = ["CREATE USER failed","Query OK"]
-
-                    index = securemysql.expect(expectation)
-
-                    if index == 0:
-                        securemysql.sendline("DROP DATABASE IF EXISTS "+dbname+";")
-                        return "This user already exists, please choose another user."
-                    else:
-                        securemysql.sendline("GRANT ALL PRIVILEGES ON " +dbname+ ".* TO '" +dbuser+ "'@'localhost';")
-                        expectation = "Query OK"
-                        securemysql.expect(expectation)
-                        securemysql.sendline("exit")
-                        securemysql.wait()
-            return 1
-        except pexpect.EOF as msg:
-            logging.InstallLog.writeToFile(str(msg) + " Exception EOF [createDatabase]")
-        except BaseException as msg:
-            logging.InstallLog.writeToFile(str(msg) + "[createDatabase]")
+            return 0

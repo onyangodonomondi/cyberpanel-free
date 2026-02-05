@@ -1,26 +1,37 @@
-import sys
 import subprocess
-import shutil
-import installLog as logging
-import argparse
-import os
 import shlex
-import socket
-
-
 
 class FirewallUtilities:
 
     @staticmethod
-    def addRule(proto,port):
+    def doCommand(command):
+        import install as inst
         try:
-            if port == "21":
-                command = "sudo firewall-cmd --add-service=ftp --permanent"
-                cmd = shlex.split(command)
-                res = subprocess.call(cmd)
+            cmd = shlex.split(command)
+            res = subprocess.call(cmd)
+            if inst.preFlightsChecks.resFailed(inst.get_distro(), res):
+                inst.preFlightsChecks.stdOut("Failed to apply rule: " + command + " Error #" + str(res), 1)
+                return 0
 
+        except OSError as msg:
+            inst.preFlightsChecks.stdOut("Failed to apply rule: " + command + " Error: " + str(msg), 1)
+            return 0
+        except ValueError as msg:
+            inst.preFlightsChecks.stdOut("Failed to apply rule: " + command + " Error: " + str(msg), 1)
+            return 0
+
+        return 1
+
+
+    @staticmethod
+    def addRule(proto,port):
+
+        print('Adding port: %s' % (port))
+
+        if port == "21":
+            command = "sudo firewall-cmd --add-service=ftp --permanent"
+        else:
             ipAddress = "0.0.0.0/0"
-
             ruleFamily = 'rule family="ipv4"'
             sourceAddress = 'source address="' + ipAddress + '"'
             ruleProtocol = 'port protocol="' + proto + '"'
@@ -28,35 +39,31 @@ class FirewallUtilities:
 
             command = "sudo firewall-cmd --permanent --zone=public --add-rich-rule='" + ruleFamily + " " + sourceAddress + " " + ruleProtocol + " " + rulePort + " " + "accept'"
 
-            cmd = shlex.split(command)
+            if not FirewallUtilities.doCommand(command):
+                return 0
 
-            res = subprocess.call(cmd)
+            ruleFamily = 'rule family="ipv6"'
+            sourceAddress = ''
 
-            command = 'sudo firewall-cmd --reload'
+            command = "sudo firewall-cmd --permanent --zone=public --add-rich-rule='" + ruleFamily + " " + sourceAddress + " " + ruleProtocol + " " + rulePort + " " + "accept'"
 
-            cmd = shlex.split(command)
-
-            res = subprocess.call(cmd)
-
-        except OSError as msg:
-            logging.InstallLog.writeToFile(str(msg) + " [addRule]")
+        if not FirewallUtilities.doCommand(command):
             return 0
-        except ValueError as msg:
-            logging.InstallLog.writeToFile(str(msg) + " [addRule]")
+
+        command = 'sudo firewall-cmd --reload'
+
+        if not FirewallUtilities.doCommand(command):
             return 0
 
         return 1
 
     @staticmethod
     def deleteRule(proto, port):
-        try:
-            if port=="21":
-                command = "sudo firewall-cmd --remove-service=ftp --permanent"
-                cmd = shlex.split(command)
-                res = subprocess.call(cmd)
 
+        if port=="21":
+            command = "sudo firewall-cmd --remove-service=ftp --permanent"
+        else:
             ipAddress = "0.0.0.0/0"
-
             ruleFamily = 'rule family="ipv4"'
             sourceAddress = 'source address="' + ipAddress + '"'
             ruleProtocol = 'port protocol="' + proto + '"'
@@ -64,21 +71,20 @@ class FirewallUtilities:
 
             command = "sudo firewall-cmd --permanent --zone=public --remove-rich-rule='" + ruleFamily + " " + sourceAddress + " " + ruleProtocol + " " + rulePort + " " + "accept'"
 
-            cmd = shlex.split(command)
+            if not FirewallUtilities.doCommand(command):
+                return 0
 
-            res = subprocess.call(cmd)
+            ruleFamily = 'rule family="ipv6"'
+            sourceAddress = ''
 
-            command = 'sudo firewall-cmd --reload'
+            command = "sudo firewall-cmd --permanent --zone=public --remove-rich-rule='" + ruleFamily + " " + sourceAddress + " " + ruleProtocol + " " + rulePort + " " + "accept'"
 
-            cmd = shlex.split(command)
-
-            res = subprocess.call(cmd)
-
-        except OSError as msg:
-            logging.InstallLog.writeToFile(str(msg) + " [deleteRule]")
+        if not FirewallUtilities.doCommand(command):
             return 0
-        except ValueError as msg:
-            logging.InstallLog.writeToFile(str(msg) + " [deleteRule]")
+
+        command = 'sudo firewall-cmd --reload'
+
+        if not FirewallUtilities.doCommand(command):
             return 0
 
         return 1
