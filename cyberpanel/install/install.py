@@ -2455,11 +2455,6 @@ class preFlightsChecks:
                      logging.InstallLog.writeToFile("CertBot successfully installed! [pip]")
                      preFlightsChecks.stdOut("CertBot successfully installed! [pip]")
                      break
-                        os._exit(0)
-                else:
-                    logging.InstallLog.writeToFile("CertBot successfully installed!  [pip]")
-                    preFlightsChecks.stdOut("CertBot successfully installed!  [pip]")
-                    break
 
         except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installCertBot]")
