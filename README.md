@@ -94,6 +94,12 @@ sudo bash /usr/local/CyberCP/ssl-hero.sh --status
 sudo bash /usr/local/CyberCP/ssl-hero.sh --all --force
 ```
 
+### Admin Panel Access Issues
+If you see `SSL_ERROR_RX_RECORD_TOO_LONG` or cannot access port 8090, run the script to auto-repair the admin certificate:
+```bash
+sudo bash /usr/local/CyberCP/ssl-hero.sh
+```
+
 ### Service Issues
 ```bash
 # Restart CyberPanel services

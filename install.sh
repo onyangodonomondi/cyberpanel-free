@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #####################################################
 # CyberPanel Free - One-Click Installer
 # https://github.com/onyangodonomondi/cyberpanel-free
@@ -14,34 +14,34 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 print_header() {
-    echo -e "${BLUE}"
-    echo "╔═══════════════════════════════════════════════════════════════╗"
-    echo "║                                                               ║"
-    echo "║           🚀 CyberPanel Free Installer 🚀                     ║"
-    echo "║                                                               ║"
-    echo "║     Premium Features Unlocked • SSL Hero Included             ║"
-    echo "║                                                               ║"
-    echo "╚═══════════════════════════════════════════════════════════════╝"
-    echo -e "${NC}"
+    printf "${BLUE}\n"
+    printf "╔═══════════════════════════════════════════════════════════════╗\n"
+    printf "║                                                               ║\n"
+    printf "║           🚀 CyberPanel Free Installer 🚀                     ║\n"
+    printf "║                                                               ║\n"
+    printf "║     Premium Features Unlocked • SSL Hero Included             ║\n"
+    printf "║                                                               ║\n"
+    printf "╚═══════════════════════════════════════════════════════════════╝\n"
+    printf "${NC}\n"
 }
 
 print_step() {
-    echo -e "${GREEN}[✓]${NC} $1"
+    printf "${GREEN}[✓]${NC} %s\n" "$1"
 }
 
 print_warning() {
-    echo -e "${YELLOW}[!]${NC} $1"
+    printf "${YELLOW}[!]${NC} %s\n" "$1"
 }
 
 print_error() {
-    echo -e "${RED}[✗]${NC} $1"
+    printf "${RED}[✗]${NC} %s\n" "$1"
 }
 
 # Check if running as root
 check_root() {
-    if [[ $EUID -ne 0 ]]; then
+    if [ "$(id -u)" -ne 0 ]; then
         print_error "This script must be run as root"
-        echo "Please run: sudo bash install.sh"
+        echo "Please run: sudo sh install.sh"
         exit 1
     fi
 }
@@ -59,7 +59,7 @@ check_os() {
 
     case $OS in
         ubuntu)
-            if [[ "$VERSION" != "20.04" && "$VERSION" != "22.04" && "$VERSION" != "24.04" ]]; then
+            if [ "$VERSION" != "20.04" ] && [ "$VERSION" != "22.04" ] && [ "$VERSION" != "24.04" ]; then
                 print_warning "Ubuntu $VERSION may not be fully tested"
             fi
             print_step "Detected Ubuntu $VERSION"
@@ -101,7 +101,7 @@ check_requirements() {
 install_dependencies() {
     print_step "Installing dependencies..."
     
-    if [ "$OS" == "ubuntu" ]; then
+    if [ "$OS" = "ubuntu" ]; then
         apt-get update -y
         apt-get install -y git python3 python3-pip wget curl
     else
@@ -118,13 +118,17 @@ install_cyberpanel() {
     
     if [ -d "$INSTALL_DIR" ]; then
         print_warning "CyberPanel already installed at $INSTALL_DIR"
-        read -p "Do you want to reinstall? (y/n): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "Installation cancelled"
-            exit 0
-        fi
-        rm -rf "$INSTALL_DIR"
+        printf "Do you want to reinstall? (y/n) "
+        read -r REPLY
+        case "$REPLY" in
+            [yY]*) 
+                rm -rf "$INSTALL_DIR"
+                ;;
+            *)
+                echo "Installation cancelled"
+                exit 0
+                ;;
+        esac
     fi
     
     git clone https://github.com/onyangodonomondi/cyberpanel-free.git "$INSTALL_DIR"
@@ -144,26 +148,22 @@ main() {
     check_requirements
     
     echo ""
-    echo -e "${YELLOW}This will install CyberPanel Free on your server.${NC}"
+    printf "${YELLOW}This will install CyberPanel Free on your server.${NC}\n"
     echo ""
-    read -p "Continue with installation? (y/n): " -n 1 -r
-    echo
-    
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Installation cancelled"
-        exit 0
-    fi
+    printf "Press ENTER to continue with installation... "
+    read -r
     
     install_dependencies
     install_cyberpanel
     
     echo ""
-    echo -e "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║           Installation Complete! 🎉                           ║${NC}"
-    echo -e "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+    printf "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}\n"
+    printf "${GREEN}║           Installation Complete! 🎉                           ║${NC}\n"
+    printf "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}\n"
     echo ""
-    echo "Access CyberPanel at: https://$(hostname -I | awk '{print $1}'):8090"
+    printf "Access CyberPanel at: https://%s:8090\n" "$(hostname -I | awk '{print $1}')"
     echo ""
 }
 
 main "$@"
+
