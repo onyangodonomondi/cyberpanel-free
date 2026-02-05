@@ -35,7 +35,7 @@ class preFlightsChecks:
     def checkIfSeLinuxDisabled(self):
         try:
             command = "sestatus"
-            output = subprocess.check_output(shlex.split(command))
+            output = subprocess.check_output(shlex.split(command)).decode("utf-8")
 
             if output.find("disabled") > -1 or output.find("permissive") > -1:
                 logging.InstallLog.writeToFile("SELinux Check OK. [checkIfSeLinuxDisabled]")
@@ -46,7 +46,7 @@ class preFlightsChecks:
                 preFlightsChecks.stdOut("Installation failed, consult: /var/log/installLogs.txt")
                 os._exit(0)
 
-        except BaseException,msg:
+        except BaseException as msg:
             logging.InstallLog.writeToFile(str(msg) + "[checkIfSeLinuxDisabled]")
             logging.InstallLog.writeToFile("SELinux Check OK. [checkIfSeLinuxDisabled]")
             preFlightsChecks.stdOut("SELinux Check OK.")
@@ -190,10 +190,10 @@ class preFlightsChecks:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [yum_update]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [yum_update]")
             return 0
 
@@ -245,12 +245,12 @@ class preFlightsChecks:
                     preFlightsChecks.stdOut("EPEL Repo added!")
                     break
 
-        except OSError,msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [enableEPELRepo]")
             preFlightsChecks.stdOut("Installation failed, consult: /var/log/installLogs.txt")
             os._exit(0)
             return 0
-        except ValueError,msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [enableEPELRepo]")
             preFlightsChecks.stdOut("Installation failed, consult: /var/log/installLogs.txt")
             os._exit(0)
@@ -573,7 +573,7 @@ class preFlightsChecks:
                     preFlightsChecks.stdOut("Gunicorn can now start after system restart!")
                     break
 
-        except BaseException, msg:
+        except BaseException as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_gunicorn]")
             preFlightsChecks.stdOut("Not able to setup gunicorn, see install log.")
 
@@ -661,7 +661,7 @@ class preFlightsChecks:
         try:
             ## On OpenVZ there is an issue with requests module, which needs to upgrade requests module
 
-            if subprocess.check_output('systemd-detect-virt').find("openvz")>-1:
+            if subprocess.check_output('systemd-detect-virt', shell=True).decode("utf-8").find("openvz")>-1:
                 count = 0
                 while(1):
                     command = "pip install --upgrade requests"
@@ -895,10 +895,10 @@ class preFlightsChecks:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_unzip]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_unzip]")
             return 0
 
@@ -928,10 +928,10 @@ class preFlightsChecks:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_zip]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_zip]")
             return 0
 
@@ -1016,7 +1016,7 @@ class preFlightsChecks:
             ## Write secret phrase
 
 
-            rString = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
+            rString = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
             data = open('phpmyadmin/config.sample.inc.php', 'r').readlines()
 
@@ -1038,10 +1038,10 @@ class preFlightsChecks:
             command = 'chown -R nobody:nobody /usr/local/lscp/cyberpanel/phpmyadmin'
             subprocess.call(shlex.split(command))
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [download_install_phpmyadmin]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [download_install_phpmyadmin]")
             return 0
 
@@ -1097,10 +1097,10 @@ class preFlightsChecks:
 
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_postfix_davecot]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_postfix_davecot]")
             return 0
 
@@ -1212,10 +1212,10 @@ class preFlightsChecks:
 
            logging.InstallLog.writeToFile("Authentication for Postfix and Dovecot set.")
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_email_Passwords]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_email_Passwords]")
             return 0
 
@@ -1835,10 +1835,10 @@ class preFlightsChecks:
 
            logging.InstallLog.writeToFile("Postfix and Dovecot configured")
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_postfix_davecot_config]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_postfix_davecot_config]")
             return 0
 
@@ -1981,10 +1981,10 @@ class preFlightsChecks:
 
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [downoad_and_install_rainloop]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [downoad_and_install_rainloop]")
             return 0
 
@@ -2015,10 +2015,10 @@ class preFlightsChecks:
                     preFlightsChecks.stdOut("OpenLiteSpeed restarted Successfully!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [reStartLiteSpeed]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [reStartLiteSpeed]")
             return 0
         return 1
@@ -2112,10 +2112,10 @@ class preFlightsChecks:
             preFlightsChecks.stdOut("FirewallD installed and configured!")
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installFirewalld]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installFirewalld]")
             return 0
 
@@ -2201,10 +2201,10 @@ class preFlightsChecks:
             logging.InstallLog.writeToFile("LSCPD Daemon Set!")
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupLSCPDDaemon]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupLSCPDDaemon]")
             return 0
 
@@ -2321,10 +2321,10 @@ class preFlightsChecks:
             file.close()
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_cron]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setup_cron]")
             return 0
 
@@ -2356,10 +2356,10 @@ class preFlightsChecks:
                     preFlightsChecks.stdOut("Succcessfully created default SSH keys!")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_default_keys]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_default_keys]")
             return 0
 
@@ -2386,10 +2386,10 @@ class preFlightsChecks:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_rsync]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [install_rsync]")
             return 0
 
@@ -2400,7 +2400,7 @@ class preFlightsChecks:
             import requests
             getVersion = requests.get('https://cyberpanel.net/version.txt')
             latest = getVersion.json()
-        except BaseException,msg:
+        except BaseException as msg:
 
             command = "pip uninstall --yes urllib3"
             subprocess.call(shlex.split(command))
@@ -2513,10 +2513,10 @@ class preFlightsChecks:
                     preFlightsChecks.stdOut("CertBot successfully installed!  [pip]")
                     break
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installCertBot]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installCertBot]")
             return 0
 
@@ -2528,7 +2528,7 @@ class preFlightsChecks:
             pathToRemoveGarbageFile = os.path.join(self.server_root_path,"modules/mod_security.so")
             os.remove(pathToRemoveGarbageFile)
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [modSecPreReqs]")
             return 0
 
@@ -2551,7 +2551,7 @@ class preFlightsChecks:
                     logging.InstallLog.writeToFile("tldextract successfully installed!  [pip]")
                     preFlightsChecks.stdOut("tldextract successfully installed!  [pip]")
                     break
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installTLDExtract]")
             return 0
 
@@ -2576,10 +2576,10 @@ class preFlightsChecks:
                     break
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installOpenDKIM]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installOpenDKIM]")
             return 0
 
@@ -2636,10 +2636,10 @@ milter_default_action = accept
 
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [configureOpenDKIM]")
             return 0
-        except ValueError, msg:
+        except ValueError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [configureOpenDKIM]")
             return 0
 
@@ -2664,7 +2664,7 @@ milter_default_action = accept
                     logging.InstallLog.writeToFile("dnspython successfully installed!  [pip]")
                     preFlightsChecks.stdOut("dnspython successfully installed!  [pip]")
                     break
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [installdnsPython]")
             return 0
 
@@ -2690,7 +2690,7 @@ milter_default_action = accept
             command = "chmod +x /usr/local/CyberCP/cli/cyberPanel.py"
             res = subprocess.call(shlex.split(command))
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupCLI]")
             return 0
 
@@ -2707,7 +2707,7 @@ milter_default_action = accept
             command = "./composer.sh"
             res = subprocess.call(shlex.split(command))
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupPHPAndComposer]")
             return 0
 
@@ -2784,7 +2784,7 @@ milter_default_action = accept
             env_path = '/usr/local/CyberCP'
             subprocess.call(['virtualenv', env_path])
             activate_this = os.path.join(env_path, 'bin', 'activate_this.py')
-            execfile(activate_this, dict(__file__=activate_this))
+            exec(open(activate_this).read(), dict(__file__=activate_this))
 
             ##
 
@@ -2814,7 +2814,7 @@ milter_default_action = accept
 
 
 
-        except OSError, msg:
+        except OSError as msg:
             logging.InstallLog.writeToFile(str(msg) + " [setupVirtualEnv]")
             return 0
 
