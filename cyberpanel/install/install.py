@@ -1921,7 +1921,7 @@ class preFlightsChecks:
             count = 0
 
             while(1):
-                command = 'find . -type d -exec chmod 755 {} \;'
+                command = r'find . -type d -exec chmod 755 {} \;'
                 cmd = shlex.split(command)
                 res = subprocess.call(cmd)
 
@@ -1943,7 +1943,7 @@ class preFlightsChecks:
 
             while(1):
 
-                command = 'find . -type f -exec chmod 644 {} \;'
+                command = r'find . -type f -exec chmod 644 {} \;'
                 cmd = shlex.split(command)
                 res = subprocess.call(cmd)
 
