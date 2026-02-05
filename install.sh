@@ -5,6 +5,7 @@
 #####################################################
 
 # Removed 'set -e' to prevent silent exit on errors
+echo "DEBUG: Script starting..."
 
 # Colors
 RED='\033[0;31m'
