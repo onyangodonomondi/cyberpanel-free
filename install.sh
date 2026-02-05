@@ -4,8 +4,7 @@
 # https://github.com/onyangodonomondi/cyberpanel-free
 #####################################################
 
-# Removed 'set -e' to prevent silent exit on errors
-echo "DEBUG: Script starting..."
+echo "Starting CyberPanel Free Installer..."
 
 # Colors
 RED='\033[0;31m'
@@ -15,27 +14,24 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 print_header() {
-    printf "${BLUE}\n"
-    printf "╔═══════════════════════════════════════════════════════════════╗\n"
-    printf "║                                                               ║\n"
-    printf "║           🚀 CyberPanel Free Installer 🚀                     ║\n"
-    printf "║                                                               ║\n"
-    printf "║     Premium Features Unlocked • SSL Hero Included             ║\n"
-    printf "║                                                               ║\n"
-    printf "╚═══════════════════════════════════════════════════════════════╝\n"
-    printf "${NC}\n"
+    echo ""
+    echo "============================================================"
+    echo "          CyberPanel Free Installer"
+    echo "     Premium Features Unlocked - SSL Hero Included"
+    echo "============================================================"
+    echo ""
 }
 
 print_step() {
-    printf "${GREEN}[✓]${NC} %s\n" "$1"
+    echo "[OK] $1"
 }
 
 print_warning() {
-    printf "${YELLOW}[!]${NC} %s\n" "$1"
+    echo "[WARNING] $1"
 }
 
 print_error() {
-    printf "${RED}[✗]${NC} %s\n" "$1"
+    echo "[ERROR] $1"
 }
 
 # Check if running as root
@@ -90,7 +86,6 @@ check_requirements() {
     
     # Check disk space
     DISK_FREE=$(df -P / | awk 'NR==2 {print $4}')
-    # Convert blocks to GB (approximate, assuming 1K blocks)
     DISK_FREE_GB=$((DISK_FREE / 1024 / 1024))
     
     if [ "$DISK_FREE_GB" -lt 10 ]; then
@@ -106,12 +101,11 @@ install_dependencies() {
     print_step "Installing dependencies..."
     
     if [ "$OS" = "ubuntu" ]; then
-        apt-get update -qq >/dev/null
-        apt-get install -y -qq git python3 python3-pip wget curl >/dev/null
+        apt-get update -qq >/dev/null 2>&1 || true
+        apt-get install -y -qq git python3 python3-pip wget curl >/dev/null 2>&1 || true
     else
-        # RHEL/CentOS/Alma/Rocky
-        yum update -y >/dev/null
-        yum install -y git python3 python3-pip wget curl >/dev/null
+        yum update -y >/dev/null 2>&1 || true
+        yum install -y git python3 python3-pip wget curl >/dev/null 2>&1 || true
     fi
 }
 
@@ -143,7 +137,7 @@ install_cyberpanel() {
     
     # Detect public IP
     if [ -z "$SERVER_IP" ]; then
-        SERVER_IP=$(curl -s https://api.ipify.org || wget -qO- https://api.ipify.org)
+        SERVER_IP=$(curl -s https://api.ipify.org 2>/dev/null || wget -qO- https://api.ipify.org 2>/dev/null || echo "")
     fi
     
     # Fallback: Prompt user if IP detection failed
@@ -172,13 +166,15 @@ main() {
     check_os
     check_requirements
     
+    INSTALL_DIR="/usr/local/CyberCP"
+    
     # Ensure fresh code if repo exists
     if [ -d "$INSTALL_DIR" ]; then
         rm -rf "$INSTALL_DIR"
     fi
     
     echo ""
-    printf "${YELLOW}This will install CyberPanel Free on your server.${NC}\n"
+    echo "This will install CyberPanel Free on your server."
     echo ""
     printf "Press ENTER to continue with installation... "
     read -r ignored_var
@@ -187,13 +183,12 @@ main() {
     install_cyberpanel
     
     echo ""
-    printf "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}\n"
-    printf "${GREEN}║           Installation Complete! 🎉                           ║${NC}\n"
-    printf "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}\n"
+    echo "============================================================"
+    echo "          Installation Complete!"
+    echo "============================================================"
     echo ""
-    printf "Access CyberPanel at: https://%s:8090\n" "$(hostname -I | awk '{print $1}')"
+    echo "Access CyberPanel at: https://$(hostname -I | awk '{print $1}'):8090"
     echo ""
 }
 
 main "$@"
-
