@@ -206,17 +206,18 @@ class preFlightsChecks:
 
             while (1):
 
-                command = "mkdir /etc/letsencrypt"
+                command = "mkdir -p /etc/letsencrypt"
 
                 cmd = shlex.split(command)
 
                 res = subprocess.call(cmd)
 
-                if res == 1:
+                if res != 0:
                     count = count + 1
                     preFlightsChecks.stdOut("We are trying to create Let's Encrypt directory to store SSLs, trying again, try number: " + str(count))
                     if count == 3:
                         logging.InstallLog.writeToFile("Failed to create Let's Encrypt directory to store SSLs. Installer can continue without this.. [setup_account_cyberpanel]")
+                        break
                 else:
                     logging.InstallLog.writeToFile("Successfully created Let's Encrypt directory!")
                     preFlightsChecks.stdOut("Successfully created Let's Encrypt directory!")
