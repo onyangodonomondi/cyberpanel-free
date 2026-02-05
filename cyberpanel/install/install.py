@@ -2416,7 +2416,7 @@ def main():
     parser.add_argument('--serial', help='Install LS Ent or OpenLiteSpeed')
     parser.add_argument('--port', help='LSCPD Port')
     parser.add_argument('--redis', help='vHosts on Redis - Requires LiteSpeed Enterprise')
-    parser.add_argument('--remotemysql', help='Opt to choose local or remote MySQL')
+    parser.add_argument('--remotemysql', default='OFF', help='Opt to choose local or remote MySQL')
     parser.add_argument('--mysqlhost', help='MySQL host if remote is chosen.')
     parser.add_argument('--mysqldb', help='MySQL DB if remote is chosen.')
     parser.add_argument('--mysqluser', help='MySQL user if remote is chosen.')

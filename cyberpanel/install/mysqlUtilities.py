@@ -52,9 +52,9 @@ class mysqlUtilities:
                 return 0
 
             if remote:
-                createUser = "CREATE USER '" + dbuser + "'@'%s' IDENTIFIED BY '" % (publicip) + dbpassword + "'"
+                createUser = "CREATE OR REPLACE USER '" + dbuser + "'@'%s' IDENTIFIED BY '" % (publicip) + dbpassword + "'"
             else:
-                createUser = "CREATE USER '" + dbuser + "'@'localhost' IDENTIFIED BY '" + dbpassword + "'"
+                createUser = "CREATE OR REPLACE USER '" + dbuser + "'@'localhost' IDENTIFIED BY '" + dbpassword + "'"
 
             command = initCommand + createUser + '"'
 
