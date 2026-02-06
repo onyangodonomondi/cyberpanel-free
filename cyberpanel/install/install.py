@@ -258,6 +258,7 @@ class preFlightsChecks:
                 count = count + 1
                 finalMessage = 'Running %s failed. Running again, try number %s' % (message, str(count))
                 preFlightsChecks.stdOut(finalMessage)
+                time.sleep(10)
                 if count == 3:
                     fatal_message = ''
                     if do_exit:
@@ -548,10 +549,10 @@ password="%s"
         command = "usermod -G lscpd,lsadm,nogroup lscpd"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-        command = "find /usr/local/CyberCP -type d -exec chmod 0755 {} \;"
+        command = "find /usr/local/CyberCP -type d -exec chmod 0755 {} \\;"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-        command = "find /usr/local/CyberCP -type f -exec chmod 0644 {} \;"
+        command = "find /usr/local/CyberCP -type f -exec chmod 0644 {} \\;"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
         command = "chmod -R 755 /usr/local/CyberCP/bin"
@@ -564,10 +565,10 @@ password="%s"
 
         ########### Fix LSCPD
 
-        command = "find /usr/local/lscp -type d -exec chmod 0755 {} \;"
+        command = "find /usr/local/lscp -type d -exec chmod 0755 {} \\;"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
-        command = "find /usr/local/lscp -type f -exec chmod 0644 {} \;"
+        command = "find /usr/local/lscp -type f -exec chmod 0644 {} \\;"
         preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
         command = "chmod -R 755 /usr/local/lscp/bin"
@@ -1316,12 +1317,12 @@ $cfg['Servers'][$i]['LogoutURL'] = 'phpmyadminsignin.php?logout';
 
             os.chdir("/usr/local/CyberCP/public/snappymail")
 
-            command = 'find . -type d -exec chmod 755 {} \;'
+            command = 'find . -type d -exec chmod 755 {} \\;'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             #############
 
-            command = 'find . -type f -exec chmod 644 {} \;'
+            command = 'find . -type f -exec chmod 644 {} \\;'
             preFlightsChecks.call(command, self.distro, command, command, 1, 0, os.EX_OSERR)
 
             ######
@@ -2589,7 +2590,7 @@ admin_password = "12345"
 
         import randomPassword
 
-        content = """<?php
+        content = r"""<?php
 
 $_ENV['snappymail_INCLUDE_AS_API'] = true;
 include '/usr/local/CyberCP/public/snappymail/index.php';
