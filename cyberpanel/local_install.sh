@@ -1438,11 +1438,11 @@ Retry_Command "/root/.acme.sh/acme.sh --upgrade --auto-upgrade"
 
 Main_Installation() {
 Debug_Log2 "Starting main installation..,30"
-if [[ -d /usr/local/CyberCP ]] ; then
-  echo -e "\n CyberPanel already installed, exiting..."
-  Debug_Log2 "CyberPanel already installed, exiting... [404]"
-  exit
-fi
+# if [[ -d /usr/local/CyberCP ]] ; then
+#   echo -e "\n CyberPanel already installed, exiting..."
+#   Debug_Log2 "CyberPanel already installed, exiting... [404]"
+#   exit
+# fi
 
 if [[ $Server_Edition = "Enterprise" ]] ; then
   echo -e "\nValidating the license..."
