@@ -21,11 +21,6 @@ elif echo $OUTPUT | grep -q "AlmaLinux 9" ; then
         SERVER_OS="CentOS8"
 yum install curl wget -y 1> /dev/null
 yum update curl wget ca-certificates -y 1> /dev/null
-elif echo $OUTPUT | grep -q "AlmaLinux 10" ; then
-        echo -e "\nDetecting AlmaLinux 10...\n"
-        SERVER_OS="CentOS8"
-yum install curl wget -y 1> /dev/null
-yum update curl wget ca-certificates -y 1> /dev/null
 elif echo $OUTPUT | grep -q "CloudLinux 7" ; then
         echo "Checking and installing curl and wget"
 yum install curl wget -y 1> /dev/null
@@ -58,12 +53,12 @@ yum update curl wget ca-certificates -y 1> /dev/null
 else
 
                 echo -e "\nUnable to detect your OS...\n"
-                echo -e "\nCyberPanel is supported on Ubuntu 18.04, Ubuntu 20.04 Ubuntu 22.04, AlmaLinux 8, AlmaLinux 9, AlmaLinux 10 and CloudLinux 7.x...\n"
+                echo -e "\nCyberPanel is supported on Ubuntu 18.04, Ubuntu 20.04 Ubuntu 22.04, AlmaLinux 8, AlmaLinux 9 and CloudLinux 7.x...\n"
                 exit 1
 fi
 
-rm -f cyberpanel.sh
-rm -f install.tar.gz
-curl --silent -o cyberpanel.sh "https://cyberpanel.sh/?dl&$SERVER_OS" 2>/dev/null
-chmod +x cyberpanel.sh
-./cyberpanel.sh $@
+# rm -f cyberpanel.sh
+# rm -f install.tar.gz
+# curl --silent -o cyberpanel.sh "https://cyberpanel.sh/?dl&$SERVER_OS" 2>/dev/null
+chmod +x local_install.sh
+./local_install.sh $@

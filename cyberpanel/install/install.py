@@ -2803,8 +2803,10 @@ def main():
                 serial = args.serial
                 preFlightsChecks.stdOut("LiteSpeed Enterprise Serial detected: " + serial)
             else:
-                preFlightsChecks.stdOut("Installation failed, please specify LiteSpeed Enterprise key using --serial")
-                os._exit(0)
+                # preFlightsChecks.stdOut("Installation failed, please specify LiteSpeed Enterprise key using --serial")
+                # os._exit(0)
+                serial = "Trial"
+                preFlightsChecks.stdOut("Feature Unlocking Mode: Using dummy serial for Enterprise features.")
 
     ## Writing public IP
 

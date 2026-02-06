@@ -40,8 +40,8 @@ class ACLManager:
                   '"listDatabases": 1, "createNameServer": 1, "createDNSZone": 1, "deleteZone": 1, "addDeleteRecords": 1, ' \
                   '"createEmail": 1, "listEmails": 1, "deleteEmail": 1, "emailForwarding": 1, "changeEmailPassword": 1, ' \
                   '"dkimManager": 1, "createFTPAccount": 1, "deleteFTPAccount": 1, "listFTPAccounts": 1, "createBackup": 1,' \
-                  ' "restoreBackup": 1, "addDeleteDestinations": 0, "scheduleBackups": 0, "remoteBackups": 0, "googleDriveBackups": 1, "manageSSL": 1, ' \
-                  '"hostnameSSL": 0, "mailServerSSL": 0 }'
+                  ' "restoreBackup": 1, "addDeleteDestinations": 1, "scheduleBackups": 1, "remoteBackups": 1, "googleDriveBackups": 1, "manageSSL": 1, ' \
+                  '"hostnameSSL": 1, "mailServerSSL": 1 }'
 
     UserACL = '{"adminStatus":0, "versionManagement": 1, "createNewUser": 0, "listUsers": 0, "deleteUser": 0 , "resellerCenter": 0, ' \
               '"changeUserACL": 0, "createWebsite": 0, "modifyWebsite": 0, "suspendWebsite": 0, "deleteWebsite": 0, ' \
@@ -49,8 +49,8 @@ class ACLManager:
               '"listDatabases": 1, "createNameServer": 0, "createDNSZone": 1, "deleteZone": 1, "addDeleteRecords": 1, ' \
               '"createEmail": 1, "listEmails": 1, "deleteEmail": 1, "emailForwarding": 1, "changeEmailPassword": 1, ' \
               '"dkimManager": 1, "createFTPAccount": 1, "deleteFTPAccount": 1, "listFTPAccounts": 1, "createBackup": 1,' \
-              ' "restoreBackup": 0, "addDeleteDestinations": 0, "scheduleBackups": 0, "remoteBackups": 0, "googleDriveBackups": 1, "manageSSL": 1, ' \
-              '"hostnameSSL": 0, "mailServerSSL": 0 }'
+              ' "restoreBackup": 1, "addDeleteDestinations": 1, "scheduleBackups": 1, "remoteBackups": 1, "googleDriveBackups": 1, "manageSSL": 1, ' \
+              '"hostnameSSL": 1, "mailServerSSL": 1 }'
 
     @staticmethod
     def VerifySMTPHost(currentACL, owner, user):
@@ -1050,22 +1050,7 @@ class ACLManager:
 
     @staticmethod
     def CheckForPremFeature(feature):
-        try:
-
-            if ProcessUtilities.decideServer() == ProcessUtilities.ent:
-                return 1
-
-            url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-            data = {
-                "name": feature,
-                "IP": ACLManager.GetServerIP()
-            }
-
-            import requests
-            response = requests.post(url, data=json.dumps(data))
-            return response.json()['status']
-        except:
-            return 1
+        return 1
 
     @staticmethod
     def CheckIPBackupObjectOwner(currentACL, backupobj, user):
