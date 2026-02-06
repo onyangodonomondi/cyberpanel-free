@@ -1122,6 +1122,10 @@ else
   . /usr/local/CyberPanel/bin/activate
 fi
 
+
+# Pre-install dependencies for Python 3.12 compatibility
+Retry_Command "pip install --default-timeout=3600 pyasyncore setuptools wheel"
+
 Debug_Log2 "Installing requirments..,3"
 
 Retry_Command "pip install --default-timeout=3600 -r /usr/local/requirments.txt"
