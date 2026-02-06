@@ -512,7 +512,7 @@ password="%s"
 
         os.chdir("/usr/local/CyberCP")
 
-        command = "/usr/local/CyberCP/bin/python manage.py makemigrations"
+        command = "/usr/local/CyberPanel/bin/python manage.py makemigrations"
         preFlightsChecks.call(command, self.distro, command, command, 1, 1, os.EX_OSERR)
 
         ##
