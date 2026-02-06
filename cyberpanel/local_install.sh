@@ -1062,8 +1062,8 @@ else
     apt install -y --allow-downgrades libgnutls30=3.6.13-2ubuntu1.3
   fi
 
-  if [[ "$Server_OS_Version" = "22" ]] ; then
-    DEBIAN_FRONTEND=noninteractive apt install -y dnsutils net-tools htop telnet libcurl4-gnutls-dev libgnutls28-dev libgcrypt20-dev libattr1 libattr1-dev liblzma-dev libgpgme-dev libcurl4-gnutls-dev libssl-dev nghttp2 libnghttp2-dev idn2 libidn2-dev libidn2-0-dev librtmp-dev libpsl-dev nettle-dev libgnutls28-dev libldap2-dev libgssapi-krb5-2 libk5crypto3 libkrb5-dev libcomerr2 libldap2-dev virtualenv git socat vim unzip zip libmariadb-dev-compat libmariadb-dev
+  if [[ "$Server_OS_Version" = "22" ]] || [[ "$Server_OS_Version" = "24" ]] ; then
+    DEBIAN_FRONTEND=noninteractive apt install -y dnsutils net-tools htop telnet libcurl4-gnutls-dev libgnutls28-dev libgcrypt20-dev libattr1 libattr1-dev liblzma-dev libgpgme-dev libcurl4-gnutls-dev libssl-dev nghttp2 libnghttp2-dev idn2 libidn2-dev libidn2-0-dev librtmp-dev libpsl-dev nettle-dev libgnutls28-dev libldap2-dev libgssapi-krb5-2 libk5crypto3 libkrb5-dev libcomerr2 libldap2-dev git socat vim unzip zip libmariadb-dev-compat libmariadb-dev python3-virtualenv
      Check_Return
   else
     DEBIAN_FRONTEND=noninteractive apt install -y dnsutils net-tools htop telnet libcurl4-gnutls-dev libgnutls28-dev libgcrypt20-dev libattr1 libattr1-dev liblzma-dev libgpgme-dev libmariadbclient-dev libcurl4-gnutls-dev libssl-dev nghttp2 libnghttp2-dev idn2 libidn2-dev libidn2-0-dev librtmp-dev libpsl-dev nettle-dev libgnutls28-dev libldap2-dev libgssapi-krb5-2 libk5crypto3 libkrb5-dev libcomerr2 libldap2-dev virtualenv git socat vim unzip zip
@@ -1096,11 +1096,17 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 #need to set lang to address some pip module installation issue.
 
-Retry_Command "pip install --default-timeout=3600 virtualenv"
+if [[ "$Server_OS" = "Ubuntu" ]] && [[ "$Server_OS_Version" = "24" ]]; then
+    echo "Skipping pip install virtualenv for Ubuntu 24..."
+elif [[ "$Server_OS" = "Ubuntu" ]] && [[ "$Server_OS_Version" = "22" ]]; then
+   echo "Skipping pip install virtualenv for Ubuntu 22..."
+else
+   Retry_Command "pip install --default-timeout=3600 virtualenv"
+fi
 
 Download_Requirement
 
-if [[ "$Server_OS" = "Ubuntu" ]] && [[ "$Server_OS_Version" = "22" ]] ; then
+if [[ "$Server_OS" = "Ubuntu" ]] && ([[ "$Server_OS_Version" = "22" ]] || [[ "$Server_OS_Version" = "24" ]]) ; then
 python3 -m venv /usr/local/CyberPanel
 Check_Return
 else
