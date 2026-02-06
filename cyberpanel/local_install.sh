@@ -1162,7 +1162,7 @@ fi
 #   Check_Return "git checkout"
 # cd - || exit
 # cp -r cyberpanel /usr/local/cyberpanel
-cd cyberpanel/install || exit
+cd /usr/local/cyberpanel/install || exit
 
 Debug_Log2 "Necessary components installed..,5"
 }
