@@ -186,11 +186,11 @@ done
 
 Check_Root() {
 echo -e "\nChecking root privileges..."
-  if echo "$Sudo_Test" | grep SUDO >/dev/null; then
-    echo -e "\nYou are using SUDO , please run as root user...\n"
-    echo -e "\nIf you don't have direct access to root user, please run \e[31msudo su -\e[39m command (do NOT miss the \e[31m-\e[39m at end or it will fail) and then run installation command again."
-    exit
-  fi
+  # if echo "$Sudo_Test" | grep SUDO >/dev/null; then
+  #   echo -e "\nYou are using SUDO , please run as root user...\n"
+  #   echo -e "\nIf you don't have direct access to root user, please run \e[31msudo su -\e[39m command (do NOT miss the \e[31m-\e[39m at end or it will fail) and then run installation command again."
+  #   exit
+  # fi
 
   if [[ $(id -u) != 0 ]] >/dev/null; then
     echo -e "\nYou must run on root user to install CyberPanel...\n"
