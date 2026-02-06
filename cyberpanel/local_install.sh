@@ -204,7 +204,7 @@ echo -e "\nChecking root privileges..."
 
 Check_Server_IP() {
 # Server_IP=$(curl --silent --max-time 30 -4 https://cyberpanel.sh/?ip)
-Server_IP=$(hostname -I | awk '{print $1}')
+Server_IP=$(curl --silent --max-time 30 -4 ifconfig.me)
   if [[ $Server_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo -e "Valid IP detected..."
   else
