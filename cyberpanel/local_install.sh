@@ -68,9 +68,10 @@ Server_Provider='Undefined'
 
 Watchdog="On"
 Redis_Hosting="No"
-Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt)
-Panel_Version=${Temp_Value:12:3}
-Panel_Build=${Temp_Value:25:1}
+# Temp_Value=$(curl --silent --max-time 30 -4 https://cyberpanel.net/version.txt)
+Temp_Value="Stable_Version=2.3 Build_Version=5"
+Panel_Version="2.3"
+Panel_Build="5"
 
 Branch_Name="v${Panel_Version}.${Panel_Build}"
 
@@ -113,7 +114,7 @@ echo -e "\n${1}=${2}\n" >> "/var/log/cyberpanel_debug_$(date +"%Y-%m-%d")_${Rand
 Debug_Log2() {
 Check_Server_IP "$@" >/dev/null 2>&1
 echo -e "\n${1}" >> /var/log/installLogs.txt
-curl --max-time 20 -d '{"ipAddress": "'"$Server_IP"'", "InstallCyberPanelStatus": "'"$1"'"}' -H "Content-Type: application/json" -X POST https://cloud.cyberpanel.net/servers/RecvData  >/dev/null 2>&1
+# curl --max-time 20 -d '{"ipAddress": "'"$Server_IP"'", "InstallCyberPanelStatus": "'"$1"'"}' -H "Content-Type: application/json" -X POST https://cloud.cyberpanel.net/servers/RecvData  >/dev/null 2>&1
 }
 
 Branch_Check() {
@@ -202,19 +203,22 @@ echo -e "\nChecking root privileges..."
 }
 
 Check_Server_IP() {
-Server_IP=$(curl --silent --max-time 30 -4 https://cyberpanel.sh/?ip)
+# Server_IP=$(curl --silent --max-time 30 -4 https://cyberpanel.sh/?ip)
+Server_IP=$(hostname -I | awk '{print $1}')
   if [[ $Server_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo -e "Valid IP detected..."
   else
-    echo -e "Can not detect IP, exit..."
-    Debug_Log2 "Can not detect IP. [404]"
-    exit
+    echo -e "Can not detect IP, using localhost..."
+    Server_IP="127.0.0.1"
+    # Debug_Log2 "Can not detect IP. [404]"
+    # exit
   fi
 
 echo -e "\nChecking server location...\n"
 
 if [[ "$Server_Country" != "CN" ]] ; then
-  Server_Country=$(curl --silent --max-time 10 -4 https://cyberpanel.sh/?country)
+  # Server_Country=$(curl --silent --max-time 10 -4 https://cyberpanel.sh/?country)
+  Server_Country="US"
   if [[ ${#Server_Country} != "2" ]] ; then
    Server_Country="Unknow"
   fi
@@ -1513,7 +1517,8 @@ Post_Install_Addon_Mecached_LSMCD() {
 if [[ $Server_OS = "CentOS" ]] || [[ $Server_OS = "openEuler" ]]; then
   yum groupinstall "Development Tools" -y
   yum install autoconf automake zlib-devel openssl-devel expat-devel pcre-devel libmemcached-devel cyrus-sasl* -y
-  wget -O lsmcd-master.zip https://cyberpanel.sh/codeload.github.com/litespeedtech/lsmcd/zip/master
+  # wget -O lsmcd-master.zip https://cyberpanel.sh/codeload.github.com/litespeedtech/lsmcd/zip/master
+  wget -O lsmcd-master.zip https://github.com/litespeedtech/lsmcd/archive/master.zip
   unzip lsmcd-master.zip
   Current_Dir=$(pwd)
   cd "$Current_Dir/lsmcd-master"  || exit
@@ -1526,7 +1531,8 @@ if [[ $Server_OS = "CentOS" ]] || [[ $Server_OS = "openEuler" ]]; then
   cd "$Current_Dir"  || exit
 else
   DEBIAN_FRONTEND=noninteractive apt install build-essential zlib1g-dev libexpat1-dev openssl libssl-dev libsasl2-dev libpcre3-dev git -y
-  wget -O lsmcd-master.zip https://cyberpanel.sh/codeload.github.com/litespeedtech/lsmcd/zip/master
+  # wget -O lsmcd-master.zip https://cyberpanel.sh/codeload.github.com/litespeedtech/lsmcd/zip/master
+  wget -O lsmcd-master.zip https://github.com/litespeedtech/lsmcd/archive/master.zip
   unzip lsmcd-master.zip
   Current_Dir=$(pwd)
   cd "$Current_Dir/lsmcd-master"  || exit
