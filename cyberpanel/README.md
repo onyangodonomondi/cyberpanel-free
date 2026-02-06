@@ -53,9 +53,9 @@ Web Hosting Control Panel that uses OpenLiteSpeed as the underlying Web Server.
 
 # Installation Instructions
 
-```
-sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh)
-```
+chmod +x install.sh
+sudo ./install.sh
+
 
 # Upgrading CyberPanel
 
