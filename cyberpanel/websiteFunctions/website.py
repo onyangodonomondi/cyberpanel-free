@@ -55,15 +55,7 @@ class WebsiteManager:
 
     def createWebsite(self, request=None, userID=None, data=None):
 
-        url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-        data = {
-            "name": "all",
-            "IP": ACLManager.GetServerIP()
-        }
-
-        import requests
-        response = requests.post(url, data=json.dumps(data))
-        Status = response.json()['status']
+        Status = 1
 
         test_domain_status = 0
 
@@ -84,15 +76,7 @@ class WebsiteManager:
         return proc.render()
 
     def WPCreate(self, request=None, userID=None, data=None):
-        url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-        data = {
-            "name": "wp-manager",
-            "IP": ACLManager.GetServerIP()
-        }
-
-        import requests
-        response = requests.post(url, data=json.dumps(data))
-        Status = response.json()['status']
+        Status = 1
 
 
         if (Status == 1) or ProcessUtilities.decideServer() == ProcessUtilities.ent:
@@ -174,15 +158,7 @@ class WebsiteManager:
 
         try:
 
-            url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-            data = {
-                "name": "wp-manager",
-                "IP": ACLManager.GetServerIP()
-            }
-
-            import requests
-            response = requests.post(url, data=json.dumps(data))
-            Status = response.json()['status']
+            Status = 1
 
             rnpss = randomPassword.generate_pass(10)
 
@@ -371,15 +347,7 @@ class WebsiteManager:
         currentACL = ACLManager.loadedACL(userID)
         admin = Administrator.objects.get(pk=userID)
 
-        url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-        data = {
-            "name": "wp-manager",
-            "IP": ACLManager.GetServerIP()
-        }
-
-        import requests
-        response = requests.post(url, data=json.dumps(data))
-        Status = response.json()['status']
+        Status = 1
 
         if (Status == 1) or ProcessUtilities.decideServer() == ProcessUtilities.ent:
 
@@ -452,15 +420,7 @@ class WebsiteManager:
         php = PHPManager.getPHPString(WPobj.owner.phpSelection)
         FinalPHPPath = '/usr/local/lsws/lsphp%s/bin/php' % (php)
 
-        url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-        data = {
-            "name": "wp-manager",
-            "IP": ACLManager.GetServerIP()
-        }
-
-        import requests
-        response = requests.post(url, data=json.dumps(data))
-        Status = response.json()['status']
+        Status = 1
 
         if (Status == 1) or ProcessUtilities.decideServer() == ProcessUtilities.ent:
 
@@ -720,15 +680,7 @@ class WebsiteManager:
                 defaultDomain='NONE'
 
 
-        url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-        data = {
-            "name": "all",
-            "IP": ACLManager.GetServerIP()
-        }
-
-        import requests
-        response = requests.post(url, data=json.dumps(data))
-        Status = response.json()['status']
+        Status = 1
 
         test_domain_status = 0
 

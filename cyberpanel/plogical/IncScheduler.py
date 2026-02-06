@@ -393,15 +393,7 @@ class IncScheduler(multi.Thread):
 
                     # logging.writeToFile('job completed')
 
-                    url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-                    data = {
-                        "name": "backups-retention",
-                        "IP": ipAddress
-                    }
-
-                    import requests
-                    response = requests.post(url, data=json.dumps(data))
-                    Status = response.json()['status']
+                    Status = 1
 
                     if (Status == 1) or ProcessUtilities.decideServer() == ProcessUtilities.ent:
                         try:

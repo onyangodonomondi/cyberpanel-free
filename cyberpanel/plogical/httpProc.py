@@ -60,8 +60,7 @@ Please launch the <a href="/base/onboarding">set-up wizard</a> to get maximum ou
                 self.data['fullName'] = '%s %s' % (admin.firstName, admin.lastName)
                 # self.data['serverCheck'] = 1
 
-                if ProcessUtilities.decideServer() == ProcessUtilities.ent:
-                    self.data['serverCheck'] = 1
+                self.data['serverCheck'] = 1
 
                 ### Load Custom CSS
                 try:

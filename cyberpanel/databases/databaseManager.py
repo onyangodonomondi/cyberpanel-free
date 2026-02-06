@@ -93,18 +93,20 @@ class DatabaseManager:
             from plogical.processUtilities import ProcessUtilities
             if ProcessUtilities.decideServer() == ProcessUtilities.OLS:
 
-                url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-                data = {
-                    "name": "Filemanager",
-                    "IP": ACLManager.fetchIP()
-                }
+                # url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
+                # data = {
+                #     "name": "Filemanager",
+                #     "IP": ACLManager.fetchIP()
+                # }
 
-                import requests
-                response = requests.post(url, data=json.dumps(data))
-                Status = response.json()['status']
+                # import requests
+                # response = requests.post(url, data=json.dumps(data))
+                # Status = response.json()['status']
+                Status = 1
 
                 if (Status == 1):
-                    template = 'baseTemplate/FileManager.html'
+                    pass
+                    # template = 'baseTemplate/FileManager.html'
                 else:
                     return redirect("https://cyberpanel.net/cyberpanel-addons")
             else:

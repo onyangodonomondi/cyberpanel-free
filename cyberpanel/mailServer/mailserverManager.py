@@ -1801,15 +1801,16 @@ milter_default_action = accept
             from plogical.processUtilities import ProcessUtilities
             if ProcessUtilities.decideServer() == ProcessUtilities.OLS:
 
-                url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
-                data = {
-                    "name": "all",
-                    "IP": ACLManager.fetchIP()
-                }
+                # url = "https://platform.cyberpersons.com/CyberpanelAdOns/Adonpermission"
+                # data = {
+                #     "name": "all",
+                #     "IP": ACLManager.fetchIP()
+                # }
 
-                import requests
-                response = requests.post(url, data=json.dumps(data))
-                Status = response.json()['status']
+                # import requests
+                # response = requests.post(url, data=json.dumps(data))
+                # Status = response.json()['status']
+                Status = 1
 
                 if (Status == 1):
                     template = 'mailServer/EmailLimits.html'
