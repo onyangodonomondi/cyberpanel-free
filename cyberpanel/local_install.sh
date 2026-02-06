@@ -179,7 +179,7 @@ do
     echo "command $1 failed for 50 times, exit..."
     exit 2
   else
-    $1  && break || echo -e "\n$1 has failed for $i times\nWait for 3 seconds and try again...\n"; sleep 3;
+    eval "$1"  && break || echo -e "\n$1 has failed for $i times\nWait for 3 seconds and try again...\n"; sleep 3;
   fi
 done
 }
